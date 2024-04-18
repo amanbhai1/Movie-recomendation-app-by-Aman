@@ -1,0 +1,60 @@
+const API_KEY = '80ebf390';
+const BASE_URL = 'http://www.omdbapi.com/';
+
+const searchInput = document.getElementById('searchInput');
+const movieContainer = document.getElementById('movieContainer');
+
+searchInput.addEventListener('input', debounce(searchMovies, 500)); // Debounce to avoid too frequent API requests
+
+async function searchMovies() {
+    const query = searchInput.value.trim();
+    if (query === '') {
+        movieContainer.innerHTML = '';
+        return;
+    }
+    const response = await fetch(`${BASE_URL}?apikey=${API_KEY}&s=${query}`);
+    const data = await response.json();
+    if (data.Response === "True") {
+        displayMovies(data.Search);
+    } else {
+        movieContainer.innerHTML = '<p>No results found</p>';
+    }
+}
+
+function displayMovies(movies) {
+    movieContainer.innerHTML = '';
+    movies.forEach(movie => {
+        const movieElement = document.createElement('div');
+        movieElement.classList.add('movie');
+        movieElement.innerHTML = `
+            <img src="${movie.Poster}" alt="${movie.Title}">
+            <h2>${movie.Title}</h2>
+            <a href="#" onclick="downloadMovie('${movie.imdbID}')">Download</a>
+        `;
+        movieContainer.appendChild(movieElement);
+    });
+}
+
+async function downloadMovie(imdbID) {
+    const response = await fetch(`${BASE_URL}?apikey=${API_KEY}&i=${imdbID}`);
+    const data = await response.json();
+    const downloadLink = data?.download_link; // Assuming the API provides a download link
+    if (downloadLink) {
+        window.open(downloadLink, '_blank');
+    } else {
+        alert('Download link not available for this movie.');
+    }
+}
+
+// Debounce function to limit API requests
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
