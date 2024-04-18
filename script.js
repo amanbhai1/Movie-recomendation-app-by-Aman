@@ -1,5 +1,5 @@
 const API_KEY = '80ebf390';
-const BASE_URL = 'http://www.omdbapi.com/';
+const BASE_URL = 'https://www.omdbapi.com/';
 
 const searchInput = document.getElementById('searchInput');
 const movieContainer = document.getElementById('movieContainer');
