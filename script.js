@@ -29,21 +29,9 @@ function displayMovies(movies) {
         movieElement.innerHTML = `
             <img src="${movie.Poster}" alt="${movie.Title}">
             <h2>${movie.Title}</h2>
-            <a href="#" onclick="downloadMovie('${movie.imdbID}')">Download</a>
         `;
         movieContainer.appendChild(movieElement);
     });
-}
-
-async function downloadMovie(imdbID) {
-    const response = await fetch(`${BASE_URL}?apikey=${API_KEY}&i=${imdbID}`);
-    const data = await response.json();
-    const downloadLink = data?.download_link; // Assuming the API provides a download link
-    if (downloadLink) {
-        window.open(downloadLink, '_blank');
-    } else {
-        alert('Download link not available for this movie.');
-    }
 }
 
 // Debounce function to limit API requests
